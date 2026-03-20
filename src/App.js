@@ -1,10 +1,13 @@
 import React from 'react'
+import Navbar from './components/Navbar'
+import Dashboard from './components/DashBoard'
 
 const App = () => {
   return (
-    <div>
-      <h1 className='h-[30px]'> HII </h1>
-    </div>
+    <>
+    <Navbar />
+    <Dashboard/>
+    </>
   )
 }
 
