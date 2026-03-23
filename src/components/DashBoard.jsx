@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const DashBoard = () => {
+const DashBoard = ({ darkMode }) => {
 
   const [tasks, setTasks] = useState([
     { id: 1, title: "Sample Task", status: "inbox" },
@@ -72,14 +72,10 @@ const DashBoard = () => {
 
   // DELETE COLUMN
   const deleteColumn = (colName) => {
-
-    // prevent deleting default columns (optional)
     if (["today", "week", "later"].includes(colName)) return;
 
-    // remove column
     setColumns(columns.filter((c) => c !== colName));
 
-    // move tasks back to inbox
     setTasks(
       tasks.map((task) =>
         task.status === colName
@@ -90,20 +86,25 @@ const DashBoard = () => {
   };
 
   return (
-<div
-  style={{
-    background: "linear-gradient(135deg, #000000, #2a2222, #383593)"
-  }}
-  className="min-h-screen w-full flex gap-4 p-4"
->
     <div
+      className={`min-h-screen w-full flex gap-4 p-4 ${
+        darkMode
+          ? "bg-[#1d2125] text-white"
+          : "bg-gray-100 text-black"
+      }`}
+    >
+
+      {/* INBOX */}
+      <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={() => handleDrop("inbox")}
-        className="w-[300px] h-[600px] bg-sky-800 rounded-2xl p-4 flex flex-col"
+        className={`w-[300px] h-[600px] rounded-2xl p-4 flex flex-col ${
+          darkMode ? "bg-sky-800" : "bg-blue-200"
+        }`}
       >
         <div className="flex items-center gap-3 mb-4">
-          <i className="fa-solid fa-inbox text-white"></i>
-          <h2 className="text-white font-bold">Inbox</h2>
+          <i className="fa-solid fa-inbox"></i>
+          <h2 className="font-bold">Inbox</h2>
         </div>
 
         {/* INPUT */}
@@ -112,9 +113,13 @@ const DashBoard = () => {
             value={newTask}
             onChange={(e) => setNewTask(e.target.value)}
             placeholder="Add task"
-            className="flex-1 p-2 rounded bg-sky-700 text-white outline-none"
+            className={`flex-1 p-2 rounded outline-none ${
+              darkMode
+                ? "bg-sky-700 text-white"
+                : "bg-white text-black"
+            }`}
           />
-          <button onClick={addTask} className="bg-blue-500 px-3 rounded">
+          <button onClick={addTask} className="bg-blue-500 px-3 rounded text-white">
             +
           </button>
         </div>
@@ -128,7 +133,11 @@ const DashBoard = () => {
                 key={task.id}
                 draggable
                 onDragStart={() => handleDragStart(task)}
-                className="bg-sky-700 p-3 rounded text-white flex justify-between items-center cursor-grab active:cursor-grabbing"
+                className={`p-3 rounded flex justify-between items-center cursor-grab ${
+                  darkMode
+                    ? "bg-sky-700 text-white"
+                    : "bg-blue-300 text-black"
+                }`}
               >
                 <span>{task.title}</span>
 
@@ -150,30 +159,14 @@ const DashBoard = () => {
           let cardColor = "bg-gray-700";
 
           if (col === "today") {
-            bgColor = "bg-yellow-700";
-            cardColor = "bg-yellow-600";
+            bgColor = darkMode ? "bg-yellow-700" : "bg-yellow-300";
+            cardColor = darkMode ? "bg-yellow-600" : "bg-yellow-200";
           } else if (col === "week") {
-            bgColor = "bg-green-700";
-            cardColor = "bg-green-600";
+            bgColor = darkMode ? "bg-green-700" : "bg-green-300";
+            cardColor = darkMode ? "bg-green-600" : "bg-green-200";
           } else if (col === "later") {
-            bgColor = "bg-gray-800";
-            cardColor = "bg-gray-700";
-          } else {
-            const colors = [
-              "bg-purple-700",
-              "bg-pink-700",
-              "bg-indigo-700",
-              "bg-teal-700"
-            ];
-            const cardColors = [
-              "bg-purple-600",
-              "bg-pink-600",
-              "bg-indigo-600",
-              "bg-teal-600"
-            ];
-
-            bgColor = colors[index % colors.length];
-            cardColor = cardColors[index % cardColors.length];
+            bgColor = darkMode ? "bg-gray-800" : "bg-gray-300";
+            cardColor = darkMode ? "bg-gray-700" : "bg-gray-200";
           }
 
           return (
@@ -181,17 +174,16 @@ const DashBoard = () => {
               key={col}
               onDragOver={(e) => e.preventDefault()}
               onDrop={() => handleDrop(col)}
-              className={`min-w-[350px] h-[400px] ${bgColor} rounded-2xl p-4 text-white hover:scale-[1.02] transition`}
+              className={`min-w-[350px] h-[400px] ${bgColor} rounded-2xl p-4 hover:scale-[1.02] transition`}
             >
               {/* HEADER */}
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-bold capitalize">{col}</h3>
 
-                {/* DELETE COLUMN */}
                 {!["today", "week", "later"].includes(col) && (
                   <button
                     onClick={() => deleteColumn(col)}
-                    className="text-red-300 hover:text-red-500"
+                    className="text-red-400"
                   >
                     ❌
                   </button>

@@ -1,19 +1,23 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const Navbar = () => {
+const Navbar = ({ darkMode }) => {
   const [search, setSearch] = useState("");
   const [showNotifications, setShowNotifications] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
-  // CREATE BUTTON
+  const navigate = useNavigate();
+
   const handleCreate = () => {
     alert("Create new task clicked!");
   };
 
   return (
-    <div className="flex items-center justify-between px-4 h-[70px] w-full bg-[#1d2125] text-white relative">
+    <div className={`flex items-center justify-between px-4 h-[70px] w-full relative ${
+      darkMode ? "bg-[#1d2125] text-white" : "bg-white text-black"
+    }`}>
 
       {/* LEFT */}
       <div className="flex items-center gap-4">
@@ -25,10 +29,17 @@ const Navbar = () => {
         ></i>
 
         {/* LOGO */}
-        <h1 className="font-bold text-lg">TaskFlow</h1>
+        <h1
+          onClick={() => navigate("/")}
+          className="font-bold text-lg cursor-pointer"
+        >
+          TaskFlow
+        </h1>
 
         {/* SEARCH */}
-        <div className="bg-[#2c333a] px-3 py-1 rounded flex items-center">
+        <div className={`px-3 py-1 rounded flex items-center ${
+          darkMode ? "bg-[#2c333a]" : "bg-gray-200"
+        }`}>
           <i className="fa-solid fa-magnifying-glass text-gray-400 mr-2"></i>
           <input
             value={search}
@@ -59,7 +70,9 @@ const Navbar = () => {
           ></i>
 
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-60 bg-[#2c333a] p-3 rounded shadow-lg">
+            <div className={`absolute right-0 mt-2 w-60 p-3 rounded shadow-lg ${
+              darkMode ? "bg-[#2c333a]" : "bg-white text-black"
+            }`}>
               <p className="text-sm">No new notifications 🔔</p>
             </div>
           )}
@@ -73,7 +86,9 @@ const Navbar = () => {
           ></i>
 
           {showHelp && (
-            <div className="absolute right-0 mt-2 w-60 bg-[#2c333a] p-3 rounded shadow-lg">
+            <div className={`absolute right-0 mt-2 w-60 p-3 rounded shadow-lg ${
+              darkMode ? "bg-[#2c333a]" : "bg-white text-black"
+            }`}>
               <p className="text-sm">Help Section</p>
               <ul className="text-xs mt-2 space-y-1">
                 <li>• Create tasks</li>
@@ -94,13 +109,30 @@ const Navbar = () => {
           </div>
 
           {showProfile && (
-            <div className="absolute right-0 mt-2 w-40 bg-[#2c333a] rounded shadow-lg">
-              <button className="block w-full text-left px-3 py-2 hover:bg-gray-700">
-                Profile
+            <div className={`absolute right-0 mt-2 w-40 rounded shadow-lg ${
+              darkMode ? "bg-[#2c333a]" : "bg-white text-black"
+            }`}>
+              
+              <button
+                onClick={() => {
+                  setShowProfile(false);
+                  navigate("/");
+                }}
+                className="block w-full text-left px-3 py-2 hover:bg-gray-400"
+              >
+                Dashboard
               </button>
-              <button className="block w-full text-left px-3 py-2 hover:bg-gray-700">
+
+              <button
+                onClick={() => {
+                  setShowProfile(false);
+                  navigate("/settings");
+                }}
+                className="block w-full text-left px-3 py-2 hover:bg-gray-400"
+              >
                 Settings
               </button>
+
               <button className="block w-full text-left px-3 py-2 hover:bg-red-500">
                 Logout
               </button>
@@ -111,12 +143,36 @@ const Navbar = () => {
 
       {/* MENU PANEL */}
       {showMenu && (
-        <div className="absolute top-[70px] left-0 w-60 h-[calc(100vh-70px)] bg-[#2c333a] p-4">
+        <div className={`absolute top-[70px] left-0 w-60 h-[calc(100vh-70px)] p-4 ${
+          darkMode ? "bg-[#2c333a]" : "bg-gray-200 text-black"
+        }`}>
           <p className="mb-2 font-bold">Menu</p>
           <ul className="space-y-2 text-sm">
-            <li className="cursor-pointer hover:text-blue-400">Dashboard</li>
-            <li className="cursor-pointer hover:text-blue-400">Tasks</li>
-            <li className="cursor-pointer hover:text-blue-400">Settings</li>
+
+            <li
+              onClick={() => {
+                navigate("/");
+                setShowMenu(false);
+              }}
+              className="cursor-pointer hover:text-blue-400"
+            >
+              Dashboard
+            </li>
+
+            <li className="cursor-pointer hover:text-blue-400">
+              Tasks
+            </li>
+
+            <li
+              onClick={() => {
+                navigate("/settings");
+                setShowMenu(false);
+              }}
+              className="cursor-pointer hover:text-blue-400"
+            >
+              Settings
+            </li>
+
           </ul>
         </div>
       )}
