@@ -159,7 +159,13 @@ const Navbar = ({ darkMode }) => {
               Dashboard
             </li>
 
-            <li className="cursor-pointer hover:text-blue-400">
+            <li
+            onClick={() => {
+                navigate("/tasks");
+                setShowMenu(false);
+              }}
+
+            className="cursor-pointer hover:text-blue-400">
               Tasks
             </li>
 

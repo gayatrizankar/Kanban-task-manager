@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 
-const DashBoard = ({ darkMode }) => {
-
-  const [tasks, setTasks] = useState([
-    { id: 1, title: "Sample Task", status: "inbox" },
-    { id: 2, title: "Another Task", status: "inbox" },
-  ]);
+const DashBoard = ({ tasks, setTasks, darkMode }) => {
 
   const [newTask, setNewTask] = useState("");
   const [columns, setColumns] = useState(["today", "week", "later"]);

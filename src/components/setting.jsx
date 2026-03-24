@@ -60,7 +60,7 @@ const Setting = ({ darkMode, setDarkMode }) => {
                 darkMode ? "bg-green-500" : "bg-gray-500"
               }`}
             >
-              {darkMode ? "ON" : "OFF"}
+              {darkMode ? "OFF" : "ON"}
             </button>
           </div>
         </div>
