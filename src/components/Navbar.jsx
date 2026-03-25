@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Navbar = ({ darkMode }) => {
+const Navbar = ({ darkMode, tasks = [] }) => {
   const [search, setSearch] = useState("");
+  const [results, setResults] = useState([]);
+
   const [showNotifications, setShowNotifications] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
@@ -14,13 +16,30 @@ const Navbar = ({ darkMode }) => {
     alert("Create new task clicked!");
   };
 
-  return (
-    <div className={`flex items-center justify-between px-4 h-[70px] w-full relative ${
-      darkMode ? "bg-[#1d2125] text-white" : "bg-white text-black"
-    }`}>
+  // 🔍 SEARCH FUNCTION
+  const handleSearch = (value) => {
+    setSearch(value);
 
+    if (!value.trim()) {
+      setResults([]);
+      return;
+    }
+
+    const filtered = tasks.filter((task) =>
+      task.title.toLowerCase().includes(value.toLowerCase())
+    );
+
+    setResults(filtered);
+  };
+
+  return (
+    <div
+      className={`flex items-center justify-between px-4 h-[70px] w-full relative ${
+        darkMode ? "bg-[#1d2125] text-white" : "bg-white text-black"
+      }`}
+    >
       {/* LEFT */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 relative">
 
         {/* MENU ICON */}
         <i
@@ -37,18 +56,50 @@ const Navbar = ({ darkMode }) => {
         </h1>
 
         {/* SEARCH */}
-        <div className={`px-3 py-1 rounded flex items-center ${
-          darkMode ? "bg-[#2c333a]" : "bg-gray-200"
-        }`}>
+        <div
+          className={`px-3 py-1 rounded flex items-center ${
+            darkMode ? "bg-[#2c333a]" : "bg-gray-200"
+          }`}
+        >
           <i className="fa-solid fa-magnifying-glass text-gray-400 mr-2"></i>
           <input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
             type="text"
             placeholder="Search"
             className="bg-transparent w-[300px] text-sm outline-none"
           />
         </div>
+
+        {/* 🔍 SEARCH RESULTS */}
+        {results.length > 0 && (
+          <div
+            className={`absolute top-[60px] left-[120px] w-[350px] rounded shadow-lg p-3 z-50 max-h-[300px] overflow-y-auto ${
+              darkMode ? "bg-[#2c333a]" : "bg-white text-black"
+            }`}
+          >
+            {results.map((task) => (
+              <div
+                key={task.id}
+                className="p-2 border-b border-gray-500 hover:bg-gray-400/20 rounded cursor-pointer"
+              >
+                <p className="font-semibold">{task.title}</p>
+
+                <p className="text-xs opacity-70">
+                  Status: {task.status}
+                </p>
+
+                <p className="text-xs opacity-70">
+                  Created: {task.createdAt || "N/A"}
+                </p>
+
+                <p className="text-xs opacity-70">
+                  By: {task.createdBy || "You"}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* RIGHT */}
@@ -70,9 +121,11 @@ const Navbar = ({ darkMode }) => {
           ></i>
 
           {showNotifications && (
-            <div className={`absolute right-0 mt-2 w-60 p-3 rounded shadow-lg ${
-              darkMode ? "bg-[#2c333a]" : "bg-white text-black"
-            }`}>
+            <div
+              className={`absolute right-0 mt-2 w-60 p-3 rounded shadow-lg ${
+                darkMode ? "bg-[#2c333a]" : "bg-white text-black"
+              }`}
+            >
               <p className="text-sm">No new notifications 🔔</p>
             </div>
           )}
@@ -86,9 +139,11 @@ const Navbar = ({ darkMode }) => {
           ></i>
 
           {showHelp && (
-            <div className={`absolute right-0 mt-2 w-60 p-3 rounded shadow-lg ${
-              darkMode ? "bg-[#2c333a]" : "bg-white text-black"
-            }`}>
+            <div
+              className={`absolute right-0 mt-2 w-60 p-3 rounded shadow-lg ${
+                darkMode ? "bg-[#2c333a]" : "bg-white text-black"
+              }`}
+            >
               <p className="text-sm">Help Section</p>
               <ul className="text-xs mt-2 space-y-1">
                 <li>• Create tasks</li>
@@ -109,10 +164,11 @@ const Navbar = ({ darkMode }) => {
           </div>
 
           {showProfile && (
-            <div className={`absolute right-0 mt-2 w-40 rounded shadow-lg ${
-              darkMode ? "bg-[#2c333a]" : "bg-white text-black"
-            }`}>
-              
+            <div
+              className={`absolute right-0 mt-2 w-40 rounded shadow-lg ${
+                darkMode ? "bg-[#2c333a]" : "bg-white text-black"
+              }`}
+            >
               <button
                 onClick={() => {
                   setShowProfile(false);
@@ -143,9 +199,11 @@ const Navbar = ({ darkMode }) => {
 
       {/* MENU PANEL */}
       {showMenu && (
-        <div className={`absolute top-[70px] left-0 w-60 h-[calc(100vh-70px)] p-4 ${
-          darkMode ? "bg-[#2c333a]" : "bg-gray-200 text-black"
-        }`}>
+        <div
+          className={`absolute top-[70px] left-0 w-60 h-[calc(100vh-70px)] p-4 ${
+            darkMode ? "bg-[#2c333a]" : "bg-gray-200 text-black"
+          }`}
+        >
           <p className="mb-2 font-bold">Menu</p>
           <ul className="space-y-2 text-sm">
 
@@ -160,12 +218,12 @@ const Navbar = ({ darkMode }) => {
             </li>
 
             <li
-            onClick={() => {
+              onClick={() => {
                 navigate("/tasks");
                 setShowMenu(false);
               }}
-
-            className="cursor-pointer hover:text-blue-400">
+              className="cursor-pointer hover:text-blue-400"
+            >
               Tasks
             </li>
 

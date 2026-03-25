@@ -6,15 +6,19 @@ const DashBoard = ({ tasks, setTasks, darkMode }) => {
   const [columns, setColumns] = useState(["today", "week", "later"]);
   const [draggedTask, setDraggedTask] = useState(null);
 
-  // ADD TASK
+  // ✅ ADD TASK (UPDATED WITH DETAILS)
   const addTask = () => {
     if (!newTask.trim()) return;
 
-    setTasks([
-      ...tasks,
-      { id: Date.now(), title: newTask, status: "inbox" }
-    ]);
+    const newTaskObj = {
+      id: Date.now(),
+      title: newTask,
+      status: "inbox",
+      createdAt: new Date().toLocaleString(), // 🔥 important
+      createdBy: "You", // 🔥 important
+    };
 
+    setTasks([...tasks, newTaskObj]);
     setNewTask("");
   };
 
@@ -114,7 +118,10 @@ const DashBoard = ({ tasks, setTasks, darkMode }) => {
                 : "bg-white text-black"
             }`}
           />
-          <button onClick={addTask} className="bg-blue-500 px-3 rounded text-white">
+          <button
+            onClick={addTask}
+            className="bg-blue-500 px-3 rounded text-white"
+          >
             +
           </button>
         </div>
