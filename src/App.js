@@ -59,6 +59,7 @@ function App() {
             <Setting
               darkMode={darkMode}
               setDarkMode={setDarkMode}
+              setTasks={setTasks}
             />
           }
         />

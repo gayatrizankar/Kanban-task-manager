@@ -1,10 +1,19 @@
 import React, { useState } from "react";
 
-const Setting = ({ darkMode, setDarkMode }) => {
+const Setting = ({ darkMode, setDarkMode, setTasks }) => {
 
   const [username, setUsername] = useState("Guest");
   const [email, setEmail] = useState("");
   const [notifications, setNotifications] = useState(true);
+
+  // 🔥 DELETE ALL TASKS
+  const handleDeleteAll = () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete all tasks?");
+    
+    if (confirmDelete) {
+      setTasks([]); // ✅ clears everything
+    }
+  };
 
   return (
     <div className={`min-h-screen p-6 flex justify-center ${
@@ -15,7 +24,6 @@ const Setting = ({ darkMode, setDarkMode }) => {
         darkMode ? "bg-[#2c333a]" : "bg-white"
       }`}>
 
-        {/* Title */}
         <h1 className="text-2xl font-bold mb-6">⚙️ Settings</h1>
 
         {/* Profile */}
@@ -27,7 +35,6 @@ const Setting = ({ darkMode, setDarkMode }) => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
               className={`p-2 rounded outline-none ${
                 darkMode ? "bg-[#1d2125]" : "bg-gray-200"
               }`}
@@ -37,7 +44,6 @@ const Setting = ({ darkMode, setDarkMode }) => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
               className={`p-2 rounded outline-none ${
                 darkMode ? "bg-[#1d2125]" : "bg-gray-200"
               }`}
@@ -45,11 +51,11 @@ const Setting = ({ darkMode, setDarkMode }) => {
           </div>
         </div>
 
-        {/* Dark Mode */}
+        {/* Theme */}
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-3">Appearance</h2>
 
-          <div className={`flex items-center justify-between p-3 rounded ${
+          <div className={`flex justify-between p-3 rounded ${
             darkMode ? "bg-[#1d2125]" : "bg-gray-200"
           }`}>
             <span>Dark Mode</span>
@@ -69,7 +75,7 @@ const Setting = ({ darkMode, setDarkMode }) => {
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-3">Notifications</h2>
 
-          <div className={`flex items-center justify-between p-3 rounded ${
+          <div className={`flex justify-between p-3 rounded ${
             darkMode ? "bg-[#1d2125]" : "bg-gray-200"
           }`}>
             <span>Email Notifications</span>
@@ -91,7 +97,10 @@ const Setting = ({ darkMode, setDarkMode }) => {
             Danger Zone
           </h2>
 
-          <button className="bg-red-500 px-4 py-2 rounded hover:bg-red-600">
+          <button
+            onClick={handleDeleteAll}
+            className="bg-red-500 px-4 py-2 rounded hover:bg-red-600"
+          >
             Delete All Tasks
           </button>
         </div>
