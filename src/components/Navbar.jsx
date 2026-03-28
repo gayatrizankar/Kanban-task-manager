@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = ({ darkMode, tasks = [] }) => {
@@ -31,6 +31,35 @@ const Navbar = ({ darkMode, tasks = [] }) => {
 
     setResults(filtered);
   };
+
+  // ⏳ AUTO CLOSE FUNCTION (4 sec)
+  useEffect(() => {
+    if (showNotifications) {
+      const timer = setTimeout(() => setShowNotifications(false), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [showNotifications]);
+
+  useEffect(() => {
+    if (showHelp) {
+      const timer = setTimeout(() => setShowHelp(false), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [showHelp]);
+
+  useEffect(() => {
+    if (showProfile) {
+      const timer = setTimeout(() => setShowProfile(false), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [showProfile]);
+
+  useEffect(() => {
+    if (showMenu) {
+      const timer = setTimeout(() => setShowMenu(false), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [showMenu]);
 
   return (
     <div
@@ -71,7 +100,7 @@ const Navbar = ({ darkMode, tasks = [] }) => {
           />
         </div>
 
-        {/* 🔍 SEARCH RESULTS */}
+        {/* SEARCH RESULTS */}
         {results.length > 0 && (
           <div
             className={`absolute top-[60px] left-[120px] w-[350px] rounded shadow-lg p-3 z-50 max-h-[300px] overflow-y-auto ${
