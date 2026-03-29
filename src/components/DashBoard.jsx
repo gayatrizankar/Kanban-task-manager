@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 
 const DashBoard = ({ tasks, setTasks, darkMode }) => {
-
   const [newTask, setNewTask] = useState("");
   const [columns, setColumns] = useState(["today", "week", "later"]);
   const [draggedTask, setDraggedTask] = useState(null);
 
-  // ✅ ADD TASK (UPDATED WITH DETAILS)
+  // ADD TASK
   const addTask = () => {
     if (!newTask.trim()) return;
 
@@ -14,8 +13,6 @@ const DashBoard = ({ tasks, setTasks, darkMode }) => {
       id: Date.now(),
       title: newTask,
       status: "inbox",
-      createdAt: new Date().toLocaleString(), // 🔥 important
-      createdBy: "You", // 🔥 important
     };
 
     setTasks([...tasks, newTaskObj]);
@@ -31,7 +28,6 @@ const DashBoard = ({ tasks, setTasks, darkMode }) => {
   const editTask = (id) => {
     const task = tasks.find((t) => t.id === id);
     const updated = prompt("Edit task:", task.title);
-
     if (!updated) return;
 
     setTasks(
@@ -41,20 +37,15 @@ const DashBoard = ({ tasks, setTasks, darkMode }) => {
     );
   };
 
-  // DRAG START
-  const handleDragStart = (task) => {
-    setDraggedTask(task);
-  };
+  // DRAG
+  const handleDragStart = (task) => setDraggedTask(task);
 
-  // DROP
   const handleDrop = (status) => {
     if (!draggedTask) return;
 
     setTasks(
       tasks.map((t) =>
-        t.id === draggedTask.id
-          ? { ...t, status }
-          : t
+        t.id === draggedTask.id ? { ...t, status } : t
       )
     );
 
@@ -69,142 +60,122 @@ const DashBoard = ({ tasks, setTasks, darkMode }) => {
     setColumns([...columns, name.toLowerCase()]);
   };
 
-  // DELETE COLUMN
+  // DELETE COLUMN (only custom ones)
   const deleteColumn = (colName) => {
+    // prevent deleting default columns
     if (["today", "week", "later"].includes(colName)) return;
 
-    setColumns(columns.filter((c) => c !== colName));
-
+    // move tasks back to inbox before deleting column
     setTasks(
-      tasks.map((task) =>
-        task.status === colName
-          ? { ...task, status: "inbox" }
-          : task
+      tasks.map((t) =>
+        t.status === colName ? { ...t, status: "inbox" } : t
       )
     );
+
+    setColumns(columns.filter((col) => col !== colName));
   };
 
   return (
-    <div
-      className={`min-h-screen w-full flex gap-4 p-4 ${
-        darkMode
-          ? "bg-[#1d2125] text-white"
-          : "bg-gray-100 text-black"
-      }`}
-    >
+    <div className="min-h-screen w-full flex bg-[#1d2125]">
 
-      {/* INBOX */}
-      <div
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={() => handleDrop("inbox")}
-        className={`w-[300px] h-[600px] rounded-2xl p-4 flex flex-col ${
-          darkMode ? "bg-sky-800" : "bg-blue-200"
-        }`}
-      >
-        <div className="flex items-center gap-3 mb-4">
-          <i className="fa-solid fa-inbox"></i>
-          <h2 className="font-bold">Inbox</h2>
-        </div>
+      {/* ================= LEFT (INBOX) ================= */}
+      <div className=" rounded-xl p-2 bg-[#1d2125] h-full">
+        <div
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={() => handleDrop("inbox")}
+          className="w-[300px] h-[600px] rounded-2xl p-4 flex flex-col border bg-[#1E2F4D] border-[#2F4A73] text-gray-200"
+        >
+          <h2 className="font-bold mb-4">Inbox</h2>
 
-        {/* INPUT */}
-        <div className="flex gap-2 mb-4">
-          <input
-            value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
-            placeholder="Add task"
-            className={`flex-1 p-2 rounded outline-none ${
-              darkMode
-                ? "bg-sky-700 text-white"
-                : "bg-white text-black"
-            }`}
-          />
-          <button
-            onClick={addTask}
-            className="bg-blue-500 px-3 rounded text-white"
-          >
-            +
-          </button>
-        </div>
+          {/* INPUT */}
+          <div className="flex gap-2 mb-4">
+            <input
+              value={newTask}
+              onChange={(e) => setNewTask(e.target.value)}
+              placeholder="Add task"
+              className="flex-1 p-2 rounded bg-[#2C2C2C] text-white outline-none"
+            />
+            <button
+              onClick={addTask}
+              className="bg-blue-500 px-3 rounded text-white"
+            >
+              +
+            </button>
+          </div>
 
-        {/* TASKS */}
-        <div className="flex flex-col gap-3 overflow-y-auto">
-          {tasks
-            .filter((t) => t.status === "inbox")
-            .map((task) => (
-              <div
-                key={task.id}
-                draggable
-                onDragStart={() => handleDragStart(task)}
-                className={`p-3 rounded flex justify-between items-center cursor-grab ${
-                  darkMode
-                    ? "bg-sky-700 text-white"
-                    : "bg-blue-300 text-black"
-                }`}
-              >
-                <span>{task.title}</span>
+          {/* TASKS */}
+          <div className="flex flex-col gap-3 overflow-y-auto">
+            {tasks
+              .filter((t) => t.status === "inbox")
+              .map((task) => (
+                <div
+                  key={task.id}
+                  draggable
+                  onDragStart={() => handleDragStart(task)}
+                  className="bg-[#2C2C2C] text-gray-200 p-3 rounded-lg shadow-md flex justify-between items-center"
+                >
+                  <span>{task.title}</span>
 
-                <div className="flex gap-2">
-                  <button onClick={() => editTask(task.id)}>✏️</button>
-                  <button onClick={() => deleteTask(task.id)}>❌</button>
+                  <div className="flex gap-2">
+                    <button onClick={() => editTask(task.id)}>✏️</button>
+                    <button onClick={() => deleteTask(task.id)}>❌</button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+          </div>
         </div>
       </div>
 
-      {/* BOARD */}
-      <div className="flex-1 flex gap-4 overflow-x-auto">
+      {/* ================= RIGHT (BOARD) ================= */}
+      <div className="flex-1 flex gap-4 p-6 bg-[#7C4D7E] h-full rounded-xl mt-[18px] overflow-x-auto w-full">
 
-        {columns.map((col, index) => {
+        {columns.map((col) => {
+          let bgColor = "bg-[#2C2C2C]";
 
-          let bgColor = "bg-gray-800";
-          let cardColor = "bg-gray-700";
-
-          if (col === "today") {
-            bgColor = darkMode ? "bg-yellow-700" : "bg-yellow-300";
-            cardColor = darkMode ? "bg-yellow-600" : "bg-yellow-200";
-          } else if (col === "week") {
-            bgColor = darkMode ? "bg-green-700" : "bg-green-300";
-            cardColor = darkMode ? "bg-green-600" : "bg-green-200";
-          } else if (col === "later") {
-            bgColor = darkMode ? "bg-gray-800" : "bg-gray-300";
-            cardColor = darkMode ? "bg-gray-700" : "bg-gray-200";
-          }
+          if (col === "today") bgColor = "bg-[#5C4500]";
+          else if (col === "week") bgColor = "bg-[#164B35]";
+          else if (col === "later") bgColor = "bg-[#0C0F0A]";
 
           return (
             <div
               key={col}
               onDragOver={(e) => e.preventDefault()}
               onDrop={() => handleDrop(col)}
-              className={`min-w-[350px] h-[400px] ${bgColor} rounded-2xl p-4 hover:scale-[1.02] transition`}
+              className={`min-w-[300px] h-[500px] ${bgColor} rounded-2xl p-4 shadow-lg
+              transform hover:scale-105 hover:-translate-y-1 transition-all duration-300`}
             >
               {/* HEADER */}
               <div className="flex justify-between items-center mb-4">
-                <h3 className="font-bold capitalize">{col}</h3>
+                <h3 className="font-bold capitalize text-white">
+                  {col}
+                </h3>
 
+                {/* ❌ DELETE BUTTON (only for custom columns) */}
                 {!["today", "week", "later"].includes(col) && (
                   <button
                     onClick={() => deleteColumn(col)}
-                    className="text-red-400"
+                    className="text-red-400 hover:text-red-600"
                   >
                     ❌
                   </button>
                 )}
               </div>
 
-              {/* TASKS */}
-              {tasks
-                .filter((t) => t.status === col)
-                .map((task) => (
-                  <div
-                    key={task.id}
-                    draggable
-                    onDragStart={() => handleDragStart(task)}
-                    className={`${cardColor} p-3 rounded mb-2 cursor-grab`}
-                  >
-                    {task.title}
-                  </div>
-                ))}
+              {/* TASKS (SCROLL ONLY HERE) */}
+              <div className="flex flex-col gap-2 overflow-y-auto max-h-[400px] pr-1">
+                {tasks
+                  .filter((t) => t.status === col)
+                  .map((task) => (
+                    <div
+                      key={task.id}
+                      draggable
+                      onDragStart={() => handleDragStart(task)}
+                      className="bg-[#2C2C2C] text-gray-200 p-3 rounded-lg shadow-md cursor-grab"
+                    >
+                      {task.title}
+                    </div>
+                  ))}
+              </div>
             </div>
           );
         })}
@@ -218,7 +189,6 @@ const DashBoard = ({ tasks, setTasks, darkMode }) => {
             + Add Column
           </button>
         </div>
-
       </div>
     </div>
   );
